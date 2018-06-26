@@ -7,6 +7,9 @@ import subprocess
 import sys
 
 
+__version__ = '0.2'
+
+
 class AtError(RuntimeError):
     """An error running the `at(1)` command.
     """
