@@ -36,22 +36,22 @@ class Job(object):
                            parse(match.group(2)))
 
 
-_safe_shell_chars = set("ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-                       "abcdefghijklmnopqrstuvwxyz"
-                       "0123456789"
-                       "-+=/:.,%_")
+_safe_shell_chars = set(b"ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+                        b"abcdefghijklmnopqrstuvwxyz"
+                        b"0123456789"
+                        b"-+=/:.,%_")
 
 
 def shell_escape(s):
     r"""Given bl"a, returns "bl\\"a".
     """
-    if isinstance(s, bytes):
-        s = s.decode('utf-8')
+    if not isinstance(s, bytes):
+        s = s.encode('utf-8')
     if not s or any(c not in _safe_shell_chars for c in s):
-        return '"%s"' % (s.replace('\\', '\\\\')
-                          .replace('"', '\\"')
-                          .replace('`', '\\`')
-                          .replace('$', '\\$'))
+        return b'"%s"' % (s.replace(b'\\', b'\\\\')
+                           .replace(b'"', b'\\"')
+                           .replace(b'`', b'\\`')
+                           .replace(b'$', b'\\$'))
     else:
         return s
 
@@ -144,14 +144,14 @@ def submit_python_job(func, time, *args, **kwargs):
     at = kwargs.pop('at', 'at')
     python = kwargs.pop('python', sys.executable)
     if isinstance(func, str):
-        invoke = '_invoke(name=%r)' % func
+        invoke = b'_invoke(name=%r)' % func
     else:
-        invoke = '_invoke(pkl=%r)' % pickle.dumps(func)
+        invoke = b'_invoke(pkl=%r)' % pickle.dumps(func)
     return submit_shell_job(
         [
             python,
-            '-c',
-            'from unix_at import _invoke; %s' % invoke,
+            b'-c',
+            b'from unix_at import _invoke; %s' % invoke,
             base64.b64encode(pickle.dumps((args, kwargs))),
         ],
         time,
