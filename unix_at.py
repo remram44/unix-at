@@ -113,8 +113,15 @@ def submit_shell_job(command, time, at='at'):
 
     :return: The `Job` object for the new job.
     """
-    if isinstance(command, collections.Iterable):
-        command = ' '.join(shell_escape(c) for c in command)
+    if isinstance(command, bytes):
+        pass
+    elif isinstance(command, str):
+        command = command.encode('utf-8')
+    elif isinstance(command, collections.Iterable):
+        command = b' '.join(shell_escape(c) for c in command)
+    else:
+        raise TypeError("command should be bytes (or str, or list of bytes or "
+                        "str)")
     if isinstance(time, datetime.datetime):
         time = convert_time(time)
     proc = subprocess.Popen([at, time],
