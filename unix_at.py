@@ -63,6 +63,12 @@ class Job(object):
                 return Job(match.group(1).decode('ascii'),
                            parse(match.group(2)))
 
+    def __repr__(self):
+        return '<%s %r>' % (self.__class__.__name__, self.name)
+
+    __str__ = __repr__
+    __unicode__ = __repr__
+
 
 _safe_shell_chars = set(b"ABCDEFGHIJKLMNOPQRSTUVWXYZ"
                         b"abcdefghijklmnopqrstuvwxyz"
