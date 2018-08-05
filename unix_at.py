@@ -15,6 +15,26 @@ class AtError(RuntimeError):
     """
 
 
+def _call_at(command, one_ok=False, stdin=None):
+    try:
+        proc = subprocess.Popen(command,
+                                stdin=subprocess.PIPE,
+                                stdout=subprocess.PIPE,
+                                stderr=subprocess.PIPE)
+    except OSError:
+        raise AtError("couldn't execute at")
+    stdout, stderr = proc.communicate(stdin)
+    if proc.returncode == 0:
+        return 0, stdout, stderr
+    elif proc.returncode == 1 and one_ok:
+        return 1, stdout, stderr
+    else:
+        raise AtError("process %s returned %d\n%s" % (
+            command[0], proc.returncode,
+            stderr.decode('utf-8', 'replace')
+        ))
+
+
 class Job(object):
     """Represents a job, parsed from the output of `at(1)`.
     """
@@ -81,8 +101,8 @@ def list_jobs(at='at'):
       ``'at'``).
     :return: A `list` of :class:`Job` objects.
     """
-    out = subprocess.check_output([at, '-l'])
-    return [Job.parse(line) for line in filter(None, out.split(b'\n'))]
+    _, stdout, _ = _call_at([at, '-l'])
+    return [Job.parse(line) for line in filter(None, stdout.split(b'\n'))]
 
 
 def get_script_for_job(job_name, at='at'):
@@ -96,13 +116,8 @@ def get_script_for_job(job_name, at='at'):
     """
     if isinstance(job_name, Job):
         job_name = job_name.name
-    try:
-        return subprocess.check_output([at, '-c', job_name])
-    except subprocess.CalledProcessError as e:
-        if e.returncode == 1:
-            return None
-        else:
-            raise AtError("process %s returned %d" % (at, e.returncode))
+    _, stdout, _ = _call_at([at, '-c', job_name])
+    return stdout
 
 
 def cancel_job(job_name, at='at'):
@@ -122,10 +137,8 @@ def cancel_job(job_name, at='at'):
             jobs.append(job_name.name)
         else:
             jobs.append(job_name)
-    proc = subprocess.Popen([at, '-r'] + jobs,
-                            stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    proc.communicate()
-    return proc.wait() == 0
+    returncode, _, _ = _call_at([at, '-r'] + jobs, one_ok=True)
+    return returncode == 0
 
 
 def submit_shell_job(command, time, at='at'):
@@ -155,11 +168,7 @@ def submit_shell_job(command, time, at='at'):
                         "str)")
     if isinstance(time, datetime.datetime):
         time = convert_time(time)
-    proc = subprocess.Popen([at, time],
-                            stdin=subprocess.PIPE, stderr=subprocess.PIPE)
-    _, stderr = proc.communicate(command)
-    if proc.wait() != 0:
-        raise AtError("process %s returned %d" % (at, proc.returncode))
+    _, _, stderr = _call_at([at, time], stdin=command)
     for line in stderr.split(b'\n'):
         if line.startswith(b'warning:'):
             continue
