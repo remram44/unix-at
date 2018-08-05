@@ -182,7 +182,7 @@ def submit_python_job(func, time, *args, **kwargs):
     :return: The :class:`Job` object for the new job.
     """
     at = kwargs.pop('at', 'at')
-    python = kwargs.pop('python', sys.executable)
+    python = kwargs.pop('python', None) or sys.executable
     if isinstance(func, str):
         invoke = b'_invoke(name=%r)' % func
     else:
