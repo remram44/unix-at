@@ -20,8 +20,13 @@ class Job(object):
     """
     def __init__(self, name, time):
         self.name = name
+        """Name of the job, shown by ``at -l``"""
         assert isinstance(time, datetime.datetime)
         self.time = time
+        """
+        Time at which the job is to run, as a :py:class:`datetime.datetime`
+        object.
+        """
 
     _regexes = [
         re.compile(br'^([0-9]+)\t(.+) a [^ ]+(:?\n?)$'),
@@ -71,6 +76,10 @@ def convert_time(dt):
 
 def list_jobs(at='at'):
     """Lists all the jobs currently in the queue.
+
+    :param at: Overrides the location of the `at` binary (defaults to
+      ``'at'``).
+    :return: A `list` of :class:`Job` objects.
     """
     out = subprocess.check_output([at, '-l'])
     return [Job.parse(line) for line in filter(None, out.split(b'\n'))]
@@ -79,7 +88,11 @@ def list_jobs(at='at'):
 def get_script_for_job(job_name, at='at'):
     """Gets the full shell script associated with a job.
 
-    :return: The script as bytes, or None if the job does not exist.
+    :param job_name: Either the name of the job as a string, like it is shown
+      by ``at -l``, or a :class:`Job` object.
+    :param at: Overrides the location of the `at` binary (defaults to
+      ``'at'``).
+    :return: The script as `bytes`, or `None` if the job does not exist.
     """
     if isinstance(job_name, Job):
         job_name = job_name.name
@@ -95,7 +108,11 @@ def get_script_for_job(job_name, at='at'):
 def cancel_job(job_name, at='at'):
     """Cancels one or multiple jobs from their names or `Job` objects.
 
-    :return: True on success, False if some jobs were not found.
+    :param job_name: An iterable of either names of jobs as strings, like it is
+      shown by ``at -l``, or :class:`Job` objects.
+    :param at: Overrides the location of the `at` binary (defaults to
+      ``'at'``).
+    :return: `True` on success, `False` if some jobs were not found.
     """
     if isinstance(job_name, (str, Job)):
         return cancel_job([job_name], at='at')
@@ -114,7 +131,18 @@ def cancel_job(job_name, at='at'):
 def submit_shell_job(command, time, at='at'):
     """Submits a shell command to be run later with `at(1)`.
 
-    :return: The `Job` object for the new job.
+    :param command: A command as a single string or an iterable of words,
+      similar to what is expected by the first argument to
+      :py:class:`subprocess.Popen`.
+    :param time: Either a :py:class:`datetime.datetime` object, or a string in
+      the format accepted by `at(1)`, such as ``"now + 1 minute"`` or
+      ``"2m + 2 days"``.
+    :param at: Overrides the location of the `at` binary (defaults to
+      ``'at'``).
+    :return: The :class:`Job` object for the new job.
+
+    Note that `at(1)` usually restores the working directory and environment
+    variables when it runs the job.
     """
     if isinstance(command, bytes):
         pass
@@ -145,11 +173,13 @@ def submit_python_job(func, time, *args, **kwargs):
     executable.
 
     :param func: Either a fully-qualified function name (e.g.
-    ``os.path.dirname``) or a function object (that will be pickled).
-    :param time: A time specification in a format accepted by `at(1)` (e.g.
-    ``2am + 2 days``) or a `datetime.datetime` object.
-
-    :return: The `Job` object for the new job.
+      ``os.path.dirname``) or a function object (that will be pickled).
+    :param time: Either a :py:class:`datetime.datetime` object, or a string in
+      the format accepted by `at(1)`, such as ``"now + 1 minute"`` or
+      ``"2m + 2 days"``.
+    :param at: Overrides the location of the `at` binary (defaults to
+      ``'at'``).
+    :return: The :class:`Job` object for the new job.
     """
     at = kwargs.pop('at', 'at')
     python = kwargs.pop('python', sys.executable)
