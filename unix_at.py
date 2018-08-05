@@ -130,7 +130,7 @@ def cancel_job(job_name, at='at'):
     :return: `True` on success, `False` if some jobs were not found.
     """
     if isinstance(job_name, (str, Job)):
-        return cancel_job([job_name], at='at')
+        return cancel_job([job_name], at=at)
     jobs = []
     for job_name in job_name:
         if isinstance(job_name, Job):
