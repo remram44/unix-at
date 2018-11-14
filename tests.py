@@ -13,6 +13,10 @@ class TestUnixAt(unittest.TestCase):
         self.assertEqual(job.name, '20')
         self.assertEqual(job.time, datetime.datetime(2018, 6, 26, 11, 37, 0))
 
+        job = unix_at.Job.parse(b'1\t2018-11-15 16:15 a root')
+        self.assertEqual(job.name, '1')
+        self.assertEqual(job.time, datetime.datetime(2018, 11, 15, 16, 15, 0))
+
     def test_convert(self):
         self.assertEqual(
             unix_at.convert_time(datetime.datetime(2018, 6, 26, 11, 48, 0)),
