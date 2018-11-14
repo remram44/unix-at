@@ -1,9 +1,6 @@
 #!/bin/bash
 
-set -eu
-
-start_test() {
-    set +eu
+if [ "$#" != 0 ]; then
     IMAGE="$1"
     SCRIPT="$2"
     LOG="$(docker run -t --rm \
@@ -13,17 +10,19 @@ start_test() {
     echo "----------"; echo "$IMAGE"
     echo "$LOG"; echo "end $IMAGE"; echo
     exit $STATUS
-}
+fi
+
+set -eu
 
 PIDS=()
 
-start_test centos:7 docker_centos.sh &
+bash "$0" centos:7 docker_centos.sh &
 PIDS+=($!)
-start_test centos:6 docker_centos.sh
+bash "$0" centos:6 docker_centos.sh &
 PIDS+=($!)
-start_test ubuntu:16.04 docker_debian.sh &
+bash "$0" ubuntu:16.04 docker_debian.sh &
 PIDS+=($!)
-start_test debian:8 docker_debian.sh &
+bash "$0" debian:8 docker_debian.sh &
 PIDS+=($!)
 
 for pid in ${PIDS[*]}; do
