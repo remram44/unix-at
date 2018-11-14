@@ -1,13 +1,17 @@
+stages:
+  - unittest
+  - functest
+
 py27:
   image: python:2.7
-  stage: test
+  stage: unittest
   script:
     - pip install .
-    - python tests.py
+    - python tests.py TestUnit
 
 py35:
   image: python:3.5
-  stage: test
+  stage: unittest
   script:
     - pip install .
-    - python tests.py
+    - python tests.py TestUnit
