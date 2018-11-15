@@ -11,7 +11,7 @@ os.chdir(os.path.abspath(os.path.dirname(__file__)))
 with io.open('README.rst', encoding='utf-8') as fp:
     description = fp.read()
 setup(name='unix-at',
-      version='1.0',
+      version='1.1',
       py_modules=['unix_at'],
       install_requires=['python-dateutil'],
       description="Talk to the at(1) daemon, to schedule jobs for later",
