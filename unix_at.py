@@ -69,6 +69,15 @@ class Job(object):
     __str__ = __repr__
     __unicode__ = __repr__
 
+    def __eq__(self, other):
+        return self.name == other.name
+
+    def __ne__(self, other):
+        return self.name != other.name
+
+    def __hash__(self):
+        return hash(self.name)
+
 
 _safe_shell_chars = set(b"ABCDEFGHIJKLMNOPQRSTUVWXYZ"
                         b"abcdefghijklmnopqrstuvwxyz"
