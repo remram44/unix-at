@@ -126,24 +126,34 @@ def get_script_for_job(job_name, at='at'):
     return stdout
 
 
-def cancel_job(job_name, at='at'):
+def cancel_job(job_name, atrm=None, at=None):
     """Cancels one or multiple jobs from their names or `Job` objects.
 
     :param job_name: An iterable of either names of jobs as strings, like it is
       shown by ``at -l``, or :class:`Job` objects.
-    :param at: Overrides the location of the `at` binary (defaults to
-      ``'at'``).
+    :param atrm: Overrides the location of the `atrm` binary (defaults to
+      ``'atrm'``).
+    :param at: Overrides the location of the `at` binary. If set, ``at -r``
+      will be called instead of ``atrm``.
     :return: `True` on success, `False` if some jobs were not found.
     """
     if isinstance(job_name, (str, Job)):
-        return cancel_job([job_name], at=at)
+        return cancel_job([job_name], atrm=atrm, at=at)
     jobs = []
     for job_name in job_name:
         if isinstance(job_name, Job):
             jobs.append(job_name.name)
         else:
             jobs.append(job_name)
-    returncode, _, _ = _call_at([at, '-r'] + jobs, one_ok=True)
+    if atrm and at:
+        raise TypeError("You can only specify one of 'at' or 'atrm'")
+    elif atrm:
+        atrm = [atrm]
+    elif at:
+        atrm = ['at', '-r']
+    else:
+        atrm = ['atrm']
+    returncode, _, _ = _call_at(atrm + jobs, one_ok=True)
     return returncode == 0
 
 
