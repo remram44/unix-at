@@ -62,6 +62,7 @@ class Job(object):
             if match is not None:
                 return Job(match.group(1).decode('ascii'),
                            parse(match.group(2)))
+        raise AtError("Invalid job line: %r" % (line,))
 
     def __repr__(self):
         return '<%s %r>' % (self.__class__.__name__, self.name)
@@ -198,6 +199,7 @@ def submit_shell_job(command, time, at='at'):
         if line.startswith(b'warning:'):
             continue
         return Job.parse(line)
+    raise AtError("Job submission didn't return a job ID")
 
 
 def submit_python_job(func, time, *args, **kwargs):
