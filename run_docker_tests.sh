@@ -22,7 +22,7 @@ PIDS+=($!)
 #PIDS+=($!)
 bash "$0" ubuntu:16.04 docker_debian.sh &
 PIDS+=($!)
-bash "$0" debian:8 docker_debian.sh &
+bash "$0" debian:9 docker_debian.sh &
 PIDS+=($!)
 
 for pid in ${PIDS[*]}; do
