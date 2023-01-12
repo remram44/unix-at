@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -eux
+
 apt-get update
 apt-get install -yy at python python-pip
 atd &
