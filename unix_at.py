@@ -1,5 +1,4 @@
 import base64
-import collections
 import datetime
 import pickle
 import re
@@ -8,6 +7,12 @@ import sys
 
 
 __version__ = '1.1.1'
+
+
+try:
+    from collections import Iterable
+except (ImportError, AttributeError):
+    from collections.abc import Iterable
 
 
 class AtError(RuntimeError):
@@ -187,7 +192,7 @@ def submit_shell_job(command, time, at='at'):
         pass
     elif isinstance(command, str):
         command = command.encode('utf-8')
-    elif isinstance(command, collections.Iterable):
+    elif isinstance(command, Iterable):
         command = b' '.join(shell_escape(c) for c in command)
     else:
         raise TypeError("command should be bytes (or str, or list of bytes or "
