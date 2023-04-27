@@ -28,6 +28,8 @@ bash "$0" debian:10 docker_debian_py2.sh &
 PIDS+=($!)
 bash "$0" debian:11 docker_debian_py3.sh &
 PIDS+=($!)
+bash "$0" debian:testing docker_debian_py3.sh &
+PIDS+=($!)
 
 for pid in ${PIDS[*]}; do
     wait $pid
