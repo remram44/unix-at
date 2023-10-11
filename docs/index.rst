@@ -45,5 +45,5 @@ Listing and manipulating jobs
 Links
 -----
 
-* `GitLab repository <https://gitlab.com/remram44/unix-at/issues>`__
-* `Bug Tracker <https://gitlab.com/remram44/unix-at/issues>`__
+* `GitHub repository <https://github.com/remram44/unix-at/issues>`__
+* `Bug Tracker <https://github.com/remram44/unix-at/issues>`__
