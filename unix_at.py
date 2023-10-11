@@ -54,8 +54,8 @@ class Job(object):
         """
 
     _regexes = [
-        re.compile(br'^([0-9]+)\t(.+) a [^ ]+(:?\n?)$'),
-        re.compile(br'^job ([0-9]+) at (.+)(:?\n?)$'),
+        re.compile(br'^(?P<name>[0-9]+)\t(?P<time>.+) a [^ ]+(:?\n?)$'),
+        re.compile(br'^job (?P<name>[0-9]+) at (?P<time>.+)(:?\n?)$'),
     ]
 
     @classmethod
@@ -65,8 +65,8 @@ class Job(object):
         for regex in cls._regexes:
             line_match = regex.match(line)
             if line_match is not None:
-                return Job(line_match.group(1).decode('ascii'),
-                           parse(line_match.group(2)))
+                return Job(line_match.group('name').decode('ascii'),
+                           parse(line_match.group('time')))
         raise AtError("Invalid job line: %r" % (line,))
 
     def __repr__(self):
