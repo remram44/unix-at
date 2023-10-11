@@ -23,7 +23,6 @@ setup(name='unix-at',
       project_urls={
           'Homepage': 'https://github.com/remram44/unix-at',
           'Documentation': 'https://unix-at.readthedocs.io/',
-          'Say Thanks': 'https://saythanks.io/to/remram44',
           'Source': 'https://github.com/remram44/unix-at',
           'Tracker': 'https://github.com/remram44/unix-at/issues',
       },
