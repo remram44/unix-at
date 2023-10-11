@@ -16,8 +16,15 @@ py35:
     - pip install .
     - python tests.py TestUnit
 
+py311:
+  image: python:3.11
+  stage: unittest
+  script:
+    - pip install .
+    - python tests.py TestUnit
+
 docker:
-  image: python:3.5
+  image: python:3.11
   stage: functest
   services:
     - docker:dind
