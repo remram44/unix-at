@@ -54,7 +54,7 @@ class Job(object):
         """
 
     _regexes = [
-        re.compile(br'^(?P<name>[0-9]+)\t(?P<time>.+) a [^ ]+(:?\n?)$'),
+        re.compile(br'^(?P<name>[0-9]+)\t(?P<time>.+) (?P<queue>[a-zA-Z=]) [^ ]+(:?\n?)$'),
         re.compile(br'^job (?P<name>[0-9]+) at (?P<time>.+)(:?\n?)$'),
     ]
 
@@ -65,6 +65,14 @@ class Job(object):
         for regex in cls._regexes:
             line_match = regex.match(line)
             if line_match is not None:
+                # Filter on the 'at' queue if we get queue information
+                try:
+                    queue = line_match.group('queue')
+                except (IndexError, KeyError):
+                    queue = b'a'
+                if queue != b'a':
+                    return None
+
                 return Job(line_match.group('name').decode('ascii'),
                            parse(line_match.group('time')))
         raise AtError("Invalid job line: %r" % (line,))
@@ -123,7 +131,12 @@ def list_jobs(at='at'):
     :return: A `list` of :class:`Job` objects.
     """
     _, stdout, _ = _call_at([at, '-l'])
-    return [Job.parse(line) for line in filter(None, stdout.split(b'\n'))]
+    result = []
+    for line in filter(None, stdout.split(b'\n')):
+        job = Job.parse(line)
+        if job is not None:
+            result.append(job)
+    return result
 
 
 def get_script_for_job(job_name, at='at'):
