@@ -1,0 +1,28 @@
+name: Test
+
+on:
+  - push
+  - pull_request
+
+jobs:
+  unittests:
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["2.7", "3.5", "3.11"]
+    runs-on: ubuntu-latest
+    container:
+      image: python:${{ matrix.python-version }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install
+        run: pip install .
+      - name: Run unit tests
+        run: python tests.py TestUnit
+
+  functests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Run functional tests with Docker
+        run: ./run_docker_tests.sh
