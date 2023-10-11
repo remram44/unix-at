@@ -63,10 +63,10 @@ class Job(object):
         from dateutil.parser import parse
 
         for regex in cls._regexes:
-            match = regex.match(line)
-            if match is not None:
-                return Job(match.group(1).decode('ascii'),
-                           parse(match.group(2)))
+            line_match = regex.match(line)
+            if line_match is not None:
+                return Job(line_match.group(1).decode('ascii'),
+                           parse(line_match.group(2)))
         raise AtError("Invalid job line: %r" % (line,))
 
     def __repr__(self):
