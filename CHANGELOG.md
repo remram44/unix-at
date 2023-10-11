@@ -1,6 +1,16 @@
 Changelog
 =========
 
+1.2 (2023-10-11)
+----------------
+
+Bugfixes:
+* Avoid collision with new `match` keyword
+* Read queue name if present in `at -l` output, only get queue "a"
+
+Other:
+* Switch project host from GitLab to GitHub
+
 1.1.2 (2023-01-12)
 ------------------
 
