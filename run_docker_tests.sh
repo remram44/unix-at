@@ -16,10 +16,6 @@ set -eu
 
 PIDS=()
 
-bash "$0" centos:7 docker_centos_py2.sh &
-PIDS+=($!)
-#bash "$0" centos:6 docker_centos_py2.sh &  # python==2.6, dateutil doesn't work
-#PIDS+=($!)
 bash "$0" ubuntu:16.04 docker_debian_py2.sh &
 PIDS+=($!)
 bash "$0" ubuntu:22.04 docker_debian_py3.sh &
