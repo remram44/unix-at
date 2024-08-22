@@ -17,7 +17,7 @@ jobs:
     container:
       image: python:${{ matrix.python-version }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Install
         run: pip install .
       - name: Run unit tests
@@ -26,6 +26,6 @@ jobs:
   functests:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Run functional tests with Docker
         run: ./run_docker_tests.sh
