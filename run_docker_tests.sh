@@ -24,6 +24,8 @@ bash "$0" debian:11 docker_debian_py3.sh &
 PIDS+=($!)
 bash "$0" debian:12 docker_debian_py3.sh &
 PIDS+=($!)
+bash "$0" debian:13 docker_debian_py3.sh &
+PIDS+=($!)
 bash "$0" debian:testing docker_debian_py3.sh &
 PIDS+=($!)
 
