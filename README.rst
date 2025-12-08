@@ -15,3 +15,6 @@ Example
     job = unix_at.submit_shell_job(['touch', '/some/file'])
     unix_at.cancel_job(job)
     job = unix_at.submit_python_job(os.mkdir, 'now + 1 hour', '/some/dir')
+
+    for job in unix_at.list_jobs():
+        print(job.name, job.time)
